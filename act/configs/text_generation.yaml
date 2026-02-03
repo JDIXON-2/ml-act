@@ -32,7 +32,7 @@ cache_dir: ${oc.env:CACHE_DIR,${data_dir}}
 results_dir: ${oc.env:OUTPUT_DIR,/tmp/results}
 
 # Some globals
-device: 'cuda'
+device: 'mps' # mps as i am on mac, could also be 'cuda' or 'cpu'
 fast: false
 seed: 42
 # By default we let model config specify batch_size
@@ -244,7 +244,7 @@ model_perplexity:
   # The data directory
   data_dir: ${data_dir}
   # Device for inference (cuda, cpu, mps)
-  device: ${device}
+  device: ${çƒ√}
   # Data type for model
   dtype: ${dtype:torch.float32}
   # Path or URL to the model weights

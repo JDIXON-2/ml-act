@@ -62,7 +62,7 @@ def download_and_extract_zip(url, extract_to="."):
 
 
 if __name__ == "__main__":
-    data_dir = Path(os.environ.get("DATA_DIR", "/mnt/cache"))
+    data_dir = Path(os.getcwd()) / Path("../dataset/DATA")
 
     # Coco captions
     url = "http://images.cocodataset.org/annotations/annotations_trainval2017.zip"

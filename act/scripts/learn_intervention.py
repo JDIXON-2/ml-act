@@ -421,6 +421,7 @@ def learn_intervention(cfg: DictConfig) -> t.Optional[InterventionsManager]:
         logger.warning(
             "Responses hook will raise exception to speedup incremental training."
         )
+
     responses_manager = ResponsesManager(cfg.responses)
     interventions_manager = InterventionsManager(
         ResponsesManager.get_output_path(cfg.responses), cfg.interventions
@@ -430,6 +431,7 @@ def learn_intervention(cfg: DictConfig) -> t.Optional[InterventionsManager]:
         if cfg.compute_responses:
             responses_manager.compute_responses()
         interventions_manager.learn_intervention_all()
+
     elif cfg.interventions.intervention_params.incremental == "incr":
         if not cfg.compute_responses:
             raise RuntimeError(

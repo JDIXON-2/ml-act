@@ -1,7 +1,7 @@
 torch
 torchvision
 torchmetrics
-transformers==4.43.4
+transformers
 diffusers
 blobfile
 datasets
@@ -10,7 +10,7 @@ pre-commit
 scikit-learn
 pandas
 wandb
-numpy<2 # compatibility with hydra-core
+numpy
 pytest
 lm-eval
 hydra-core

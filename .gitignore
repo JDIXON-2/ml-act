@@ -124,3 +124,7 @@ dmypy.json
 
 #Hydra logs
 outputs/
+
+
+
+env_var_set.sh

@@ -504,8 +504,10 @@ class ResponsesLoader:
         all_indices = np.arange(len(data_subset))
         rng = np.random.RandomState(seed)
         subset_indices = {}
+        
         # Count whether subset appears as only source, only target, or both
         subset_counts = defaultdict(lambda: 0)
+        
         # Count how much data has been used in a subset in order to use the rest for the other
         subset_offsets = defaultdict(lambda: 0)
         min_subset = np.inf
@@ -526,13 +528,17 @@ class ResponsesLoader:
                 if balanced:
                     end = min_subset // len(src_subset)
                     for k, v in data.items():
-                        ret[k].append(v[subset_indices[subset][:end]])
+                        # ret[k].append(v[subset_indices[subset][:end]])
+                        ret[k].append([v[i] for i in subset_indices[subset][:end]])
                     ret["label"].append(np.ones((end,)))
                     subset_offsets[subset] += end
                 else:
                     subset_len = len(subset_indices[subset]) // subset_counts[subset]
                     for k, v in data.items():
-                        ret[k].append(v[subset_indices[subset][:subset_len]])
+                        # ret[k].append(v[subset_indices[subset][:subset_len]])
+                        ret[k].append(
+                            [v[i] for i in subset_indices[subset][:subset_len]]
+                        )
                     ret["label"].append(np.ones((subset_len,)))
                     subset_offsets[subset] += subset_len
 
@@ -542,14 +548,17 @@ class ResponsesLoader:
                     end = start + min_subset // len(dst_subset)
                     ret["label"].append(np.zeros((end - start,)))
                     for k, v in data.items():
-                        ret[k].append(v[subset_indices[subset][start:end]])
+                        # ret[k].append(v[subset_indices[subset][start:end]])
+                        ret[k].append([v[i] for i in subset_indices[subset][start:end]])
+
                 else:
                     subset_len = len(subset_indices[subset]) // subset_counts[subset]
                     for k, v in data.items():
-                        ret[k].append(v[subset_indices[subset][start:]])
+                        # ret[k].append(v[subset_indices[subset][start:]])
+                        ret[k].append([v[i] for i in subset_indices[subset][start:]])
                     ret["label"].append(np.zeros((len(ret[k][-1]),)))
         indices = rng.permutation(sum(map(len, ret["label"])))
-        ret = {k: np.concatenate(v)[indices] for k, v in ret.items()}
+        ret = {k: np.concatenate(v)[indices].tolist() for k, v in ret.items()}
         return ret
 
 

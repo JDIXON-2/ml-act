@@ -224,7 +224,11 @@ class GaussianOTHook(InterventionHook):
             self.quantiles_src[0] = self.quantiles_src[0][self.mask].view(1, -1)
             self.quantiles_src[1] = self.quantiles_src[1][self.mask].view(1, -1)
 
-    def forward(self, module, input, output) -> t.Any:
+    def forward(self, module, input, output, strength: float = None) -> t.Any:
+        # modified so the strength can be varied at inference time
+        if not strength:
+            strength = self.strength
+
         output_shape = output.shape
         if len(output_shape) == 3:
             output = output.view(-1, output_shape[2])
@@ -259,7 +263,7 @@ class GaussianOTHook(InterventionHook):
             z_ot = self.std1_2_m * (z_unit - self.mu1_m) + self.mu2_m
 
         # Apply transport with specific strength
-        z_ot = self.strength * z_ot + (1 - self.strength) * z_unit
+        z_ot = strength * z_ot + (1 - strength) * z_unit
 
         if len(output_shape) == 4:
             pool_mask = pool_mask[..., None, None]
@@ -438,6 +442,7 @@ class LearnableOTHook(abc.ABC, InterventionHook):
         dim = z_src.shape[-1]
 
         # Find OT pairs "PER NEURON" (not jointly!).
+        # sort each dimension independently
         z_src_ot, z_dst_ot = torch.empty_like(z_src), torch.empty_like(z_dst)  # B, S
         for idx in range(dim):
             z_src_ot[:, idx], z_dst_ot[:, idx] = solve_ot_1d(
@@ -452,7 +457,7 @@ class LearnableOTHook(abc.ABC, InterventionHook):
         self._fit_net(
             z_src_ot=z_src_ot,
             z_dst_ot=z_dst_ot,
-            use_gd=kwargs.get("use_gd", False),
+            use_gd=use_gd,
             **kwargs,
         )
         self.net = self.net.to(self.dtype).to(self.device)
@@ -475,7 +480,9 @@ class LearnableOTHook(abc.ABC, InterventionHook):
             self.quantiles_src[0] = self.quantiles_src[0].view(1, -1)
             self.quantiles_src[1] = self.quantiles_src[1].view(1, -1)
 
-    def forward(self, module, input, output) -> t.Any:
+    def forward(self, module, input, output, strength=None) -> t.Any:
+        strength = self.strength if strength is None else strength
+
         output_shape = output.shape
         output_orig = output
         if len(output_shape) == 4:  # diffusion
@@ -491,7 +498,7 @@ class LearnableOTHook(abc.ABC, InterventionHook):
         z_ot = self.net(z_unit, reverse=False).to(z_unit.dtype)
 
         # Apply transport with specific strength
-        z_ot = self.strength * z_ot + (1 - self.strength) * z_unit
+        z_ot = strength * z_ot + (1 - strength) * z_unit
 
         # Only apply masked outputs
         if len(output_shape) == 4:
@@ -521,6 +528,8 @@ class LinearOTHook(LearnableOTHook):
                 epochs=kwargs.get("epochs"),
                 lr=kwargs.get("learning_rate"),
             )
+
+        # direct via means of distributions - JD
         else:
             opt_params, opt_extra = self.net.optimize(
                 z_src_ot.cpu().numpy(),

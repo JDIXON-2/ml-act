@@ -32,7 +32,7 @@ cache_dir: ${oc.env:CACHE_DIR,${data_dir}}
 results_dir: ${oc.env:OUTPUT_DIR,/tmp/results}
 
 # Some globals
-device: 'cuda'
+device: 'mps'
 fast: false
 seed: 42
 # By default we let model config specify batch_size

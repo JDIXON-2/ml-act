@@ -5,8 +5,10 @@
 This script defines a pipeline for training and evaluating generative models with interventions.
 It handles loading configurations, managing responses, and learning interventions on specified modules.
 
-The pipeline leverages Hydra for configuration management and provides both "atonce" and "incr" modes for intervention learning. 
-"atonce" mode learns interventions on all modules simultaneously, while "incr" mode allows for incremental learning, leveraging previously learned interventions when training on subsequent modules.
+The pipeline leverages Hydra for configuration management and provides both "atonce" and "incr" modes
+for intervention learning.
+"atonce" mode learns interventions on all modules simultaneously, while "incr" mode allows for incremental
+learning, leveraging previously learned interventions when training on subsequent modules.
 
 """
 
@@ -98,6 +100,7 @@ EVAL_REGISTRY = {
 @hydra.main(config_path="../configs", config_name="text_generation", version_base="1.3")
 def main(cfg: DictConfig) -> None:
     logger.info(cfg)
+    cfg.text_generation.results_dir = cfg.text_generation.data_dir
 
     wandb_run = utils.setup_wandb(cfg)
 

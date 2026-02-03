@@ -35,7 +35,7 @@ class ReturnOutputsHook(ResponsesHook):
                 for idx in range(len(output)):
                     _hook(f"{module_name}:{idx}", output[idx])
             else:
-                logging.warn(f"Found {type(output)} in {self.module_name}")
+                logging.warning(f"Found {type(output)} in {self.module_name}")
 
         _hook(self.module_name, output)
 

@@ -9,18 +9,20 @@ from .return_outputs_hook import ReturnOutputsHook
 from .transport import GaussianOTHook, LinearOTHook, OnlyMeanHook
 
 HOOK_REGISTRY = {
-    "postprocess_and_save": PostprocessAndSaveHook,
-    "return_outputs": ReturnOutputsHook,
-    "aura": AURAHook,
-    "mean_ot": OnlyMeanHook,
-    "gaussian_ot": GaussianOTHook,
-    "linear_ot": LinearOTHook,
-    "identity": IdentityHook,
-    "none": IdentityHook,
+    "postprocess_and_save": PostprocessAndSaveHook,  # respsonse hook
+    "return_outputs": ReturnOutputsHook,  # respsonse hook
+    "aura": AURAHook,  # intervention hook
+    "mean_ot": OnlyMeanHook,  # intervention hook
+    "gaussian_ot": GaussianOTHook,  # intervention hook
+    "linear_ot": LinearOTHook,  # intervention hook
+    "identity": IdentityHook,  # intervention hook
+    "none": IdentityHook,  # intervention hook
 }
 
 
-def get_hook(name: str, *args, **kwargs) -> ResponsesHook:
+def get_hook(
+    name: str, *args, **kwargs
+) -> ResponsesHook:  # can ALSO be an intervention hook!
     hook_cls = HOOK_REGISTRY[name]
     hook = hook_cls(*args, **kwargs)
     return hook
