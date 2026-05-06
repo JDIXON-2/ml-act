@@ -16,11 +16,26 @@ authors = [
     {name="Xavier Suau",  email="xsuaucuadros@apple.com"},
 ]
 license = { text = "Apple Sample Code License" }
-dynamic = ["dependencies"]
-
-# This will fetch dependencies from requirements.txt when running `pip install .`.
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = [
+    "torch",
+    "torchvision",
+    "transformers",
+    "diffusers",
+    "accelerate",
+    "huggingface-hub",
+    "hydra-core",
+    "omegaconf",
+    "lm-eval",
+    "numpy",
+    "pandas",
+    "pillow",
+    "pyyaml",
+    "requests",
+    "safetensors",
+    "scikit-learn",
+    "tqdm",
+    "wandb",
+]
 
 [project.urls]
 homepage = "https://github.com/apple/ml-act"
